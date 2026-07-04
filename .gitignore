@@ -1,0 +1,21 @@
+# secrets / auth
+user_data.pkl
+device_id.txt
+.env
+
+# python venv & caches
+roborock-env/
+__pycache__/
+*.pyc
+
+# generated video segments
+hls/
+
+# xcode build output
+app/build/
+DerivedData/
+*.xcuserstate
+**/xcuserdata/
+
+# macos
+.DS_Store
