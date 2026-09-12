@@ -1,30 +1,30 @@
 # Roborock, driven directly
 
-Drive a Roborock vacuum from the keyboard, or from a phone over the local
-network, without the vendor app. The robot becomes a remote-controlled camera
-platform that can be sent somewhere and looked through.
+Drive a Roborock vacuum from the keyboard, or from a phone on the local network,
+without using the vendor app. This turns the robot into a remote-controlled
+camera you can send to another room and look through.
 
 ## Why
 
-The vendor app can start a clean and show a map. It cannot let you drive the
-thing down the hall to see whether you left the stove on. The robot already has
-the motors, the camera and a video stream; the only missing piece is a control
-surface that treats it as a vehicle rather than an appliance.
+The vendor app can start a cleaning run and show a map, but it cannot drive the
+robot manually. The robot already has motors, a camera and a video stream. The
+only missing piece is a control interface that treats it as a vehicle rather
+than an appliance.
 
 ## What is here
 
 | File | What it does |
 |---|---|
 | [`login.py`](login.py) | Authenticates once and pickles the session, so nothing else has to hold credentials. |
-| [`drive.py`](drive.py) | Raw-mode terminal driving. Arrow keys map to velocity and yaw, released on key-up, with a duration cap so a dropped connection cannot leave it running. |
-| [`server.py`](server.py) | An aiohttp control server: the same movement commands over HTTP, plus an HLS stream from the robot's camera so the phone gets video and controls in one page. |
+| [`drive.py`](drive.py) | Keyboard driving in the terminal. Arrow keys set forward speed and turn rate, and the command is released when you let go. A duration limit stops the robot if the connection drops. |
+| [`server.py`](server.py) | An aiohttp server offering the same movement commands over HTTP, plus an HLS video stream from the robot's camera, so a phone gets video and controls on one page. |
 | [`home.py`](home.py) | Send it back to the dock. |
-| [`beep.py`](beep.py) | Locate it by ear when it is under furniture. |
+| [`beep.py`](beep.py) | Makes the robot beep, so you can find it when it is under furniture. |
 | [`status.py`](status.py) | Battery, state and current room. |
 
-Movement is expressed as `(velocity, omega)` pairs and always released
-explicitly, because the robot will happily keep executing the last command it
-received.
+Movement is sent as `(velocity, omega)` pairs, where `omega` is the turn rate.
+Every movement is explicitly released afterwards, because the robot keeps
+running the last command it received until told otherwise.
 
 ## Setup
 
@@ -35,18 +35,21 @@ python3 drive.py          # keyboard control
 python3 server.py         # http control + HLS video on :8050
 ```
 
-The session pickle and `.env` are gitignored. `DURATION` caps how long a single
-movement command can run, which matters more than it sounds: a control server on
-a flaky wifi link will otherwise send a move and never send the stop.
+The saved session file and `.env` are both gitignored.
+
+`DURATION` limits how long a single movement command can run. This matters: on
+an unreliable wifi link, the server can send a move command and then fail to
+send the stop, and without the limit the robot would keep going.
 
 ## Notes
 
-Built against the [`python-roborock`](https://github.com/humbertogontijo/python-roborock)
-library, which does the protocol work. This repo is the control surface on top of
-it, not the protocol implementation.
+This is built on the
+[`python-roborock`](https://github.com/humbertogontijo/python-roborock) library,
+which handles the protocol. This repo is the control layer on top of it, not a
+protocol implementation.
 
-Unofficial and unaffiliated. Roborock's cloud API is not documented for this use
-and can change without notice.
+This project is unofficial and not affiliated with Roborock. Their cloud API is
+not documented for this purpose and may change at any time.
 
 ---
 
