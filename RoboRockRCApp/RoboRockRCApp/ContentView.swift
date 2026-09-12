@@ -3,7 +3,7 @@ import SwiftUI
 import AVKit
 
 // <-- put your Mac's Wi-Fi IP here
-let serverBase = "http://100.122.41.117:8050"
+let serverBase = "http://YOUR-SERVER-HOST:8050"   // e.g. a tailnet name or LAN IP
 
 struct Robot: Identifiable, Decodable {
     let name: String
